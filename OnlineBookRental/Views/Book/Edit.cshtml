@@ -1,0 +1,71 @@
+﻿@model OnlineBookRental.Domain.Entities.Book
+
+@{
+	ViewData["Title"] = "Edit Book";
+}
+<div class="card shadow border-0 mt-4">
+	<div class="card-header bg-primary bg-gradient ml-0 py-3">
+		<div class="row">
+			<div class="col-12 text-center">
+				<h2 class="text-white py-2">Edit Book</h2>
+			</div>
+		</div>
+	</div>
+	<div class="card-body py-4">
+		<form method="post" class="row">
+			<input type="hidden" asp-for = "Id"/>@*Hidden field to pass the data BookId for Update*@
+			<div class="border p-3">
+				<div class="form-floating py-2 col-12">
+					<input asp-for="Title" class="form-control border-0 shadow" />
+					<label asp-for="Title" class="ms-2" ></label>
+					<span asp-validation-for="Title" class="text-danger"></span>
+				</div>
+				<div class="form-floating py-2 col-12">
+					<input asp-for="Author" class="form-control border-0 shadow" />
+					<label asp-for="Author" class="ms-2"></label>
+					<span asp-validation-for="Author" class="text-danger"></span>
+				</div>
+				<div class="form-floating py-2 col-12">
+					<input asp-for="ISBN" class="form-control border-0 shadow" />
+					<label asp-for="ISBN" class="ms-2"></label>
+					<span asp-validation-for="ISBN" class="text-danger"></span>
+				</div>
+				<div class="form-floating py-2 col-12">
+					<input asp-for="Description" class="form-control border-0 shadow" />
+					<label asp-for="Description" class="ms-2"></label>
+					<span asp-validation-for="Description" class="text-danger"></span>
+				</div>
+				<div class="form-floating py-2 col-12">
+					<input asp-for="ImageUrl" class="form-control border-0 shadow" />
+					<label asp-for="ImageUrl" class="ms-2"></label>
+					<span asp-validation-for="ImageUrl" class="text-danger"></span>
+				</div>
+				<div class="form-floating py-2 col-12">
+					<input asp-for="RentalPricePerDay" class="form-control border-0 shadow" />
+					<label asp-for="RentalPricePerDay" class="ms-2"></label>
+					<span asp-validation-for="RentalPricePerDay" class="text-danger"></span>
+				</div>
+				<div class="form-floating py-2 col-12">
+					<input asp-for="QuantityAvailable" class="form-control border-0 shadow" />
+					<label asp-for="QuantityAvailable" class="ms-2"></label>
+					<span asp-validation-for="QuantityAvailable" class="text-danger"></span>
+				</div>
+				<div class="row mt-3">
+					<div class="col-12 col-md-6">
+						<button type="submit" class="btn btn-primary form-control">Update</button>
+					</div>
+					<div class="col-12 col-md-6">
+						<a asp-controller="Book" asp-action="Index" class=" btn btn-secondar border form-control">Back To List</a>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+@section Scripts{
+	@{
+		<partial name="_ValidationScriptsPartial"/>
+	}
+}
+
