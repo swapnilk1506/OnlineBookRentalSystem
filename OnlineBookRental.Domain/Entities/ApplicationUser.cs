@@ -1,16 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity; // Required for IdentityUser inheritance
+﻿using Microsoft.AspNetCore.Identity; // Required for IdentityUser
 
 namespace OnlineBookRental.Domain.Entities
 {
-    // Represents a user in the application. Inherits from IdentityUser<string>
-    // to specify string as the key type, matching IdentityDbContext's expectation.
-    public class ApplicationUser : IdentityUser<string> // CRITICAL FIX: Inherit from IdentityUser<string>
+    // Custom ApplicationUser class, extending IdentityUser to add custom properties.
+    public class ApplicationUser : IdentityUser
     {
-        // Add any additional properties specific to your application user here.
-        // For example:
+        // Additional properties for your user.
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        // public string Address { get; set; }
-        // public DateTime RegistrationDate { get; set; }
+        // You can add more properties here, e.g., Address, City, etc.
     }
 }

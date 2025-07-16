@@ -1,20 +1,21 @@
-﻿using OnlineBookRental.Domain.Interfaces;
+﻿using OnlineBookRental.Domain.Entities;
+using OnlineBookRental.Domain.Interfaces;
 using OnlineBookRental.Infrastructure.Data;
 using OnlineBookRental.Infrastructure.Repositories;
 using System.Threading.Tasks;
-using System; // Added for IDisposable
-using OnlineBookRental.Domain.Entities; // Added for IRepository<Book>
 
 namespace OnlineBookRental.Infrastructure
 {
     // Implementation of the Unit of Work pattern.
     // Manages repository instances and database transaction commits.
-    public class UnitOfWork : IUnitOfWork // Now explicitly implements IDisposable
+    public class UnitOfWork : IUnitOfWork
     {
         // The database context instance.
         private readonly ApplicationDbContext _context;
-        // Private field for the Book repository instance, now generic.
-        private IRepository<Book>? _bookRepository; // Changed to IRepository<Book>
+        // Private fields for repository instances.
+        private IRepository<Book>? _bookRepository;
+        private IRepository<RentalHeader>? _rentalHeaderRepository;
+        private IRepository<RentalDetail>? _rentalDetailRepository;
 
         // Constructor to initialize the database context.
         public UnitOfWork(ApplicationDbContext context)
@@ -23,22 +24,45 @@ namespace OnlineBookRental.Infrastructure
         }
 
         // Public property to get the Book repository instance.
-        // Lazy initialization ensures the repository is created only when first accessed.
-        public IRepository<Book> Books // Changed return type to IRepository<Book>
+        public IRepository<Book> Books
         {
             get
             {
                 if (_bookRepository == null)
                 {
-                    // Directly instantiate BookRepository which implements IRepository<Book>
                     _bookRepository = new BookRepository(_context);
                 }
                 return _bookRepository;
             }
         }
 
+        // Public property to get the RentalHeader repository instance.
+        public IRepository<RentalHeader> RentalHeaders
+        {
+            get
+            {
+                if (_rentalHeaderRepository == null)
+                {
+                    _rentalHeaderRepository = new RentalHeaderRepository(_context);
+                }
+                return _rentalHeaderRepository;
+            }
+        }
+
+        // Public property to get the RentalDetail repository instance.
+        public IRepository<RentalDetail> RentalDetails
+        {
+            get
+            {
+                if (_rentalDetailRepository == null)
+                {
+                    _rentalDetailRepository = new RentalDetailRepository(_context);
+                }
+                return _rentalDetailRepository;
+            }
+        }
+
         // Saves all changes made in this unit of work to the database.
-        // Returns the number of state entries written to the database.
         public async Task<int> CompleteAsync()
         {
             return await _context.SaveChangesAsync();

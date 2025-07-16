@@ -1,22 +1,191 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+/* Custom styles for font and general body styles */
+html, body {
+    height: 100%; /* Ensure html and body take full height */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Prefer Inter, fallback to Segoe UI */
+    background-color: #f0f2f5; /* Light gray background, similar to JustBooks */
+    color: #333; /* Darker text for readability */
+    display: flex; /* Enable flexbox for sticky footer */
+    flex-direction: column; /* Arrange children vertically */
+    min-height: 100vh; /* Ensure body is at least viewport height */
 }
+
+/* Navbar specific styling */
+.navbar {
+    background-color: #ffffff; /* White background for navbar */
+    border-bottom: 1px solid #e0e0e0; /* Subtle border at the bottom */
+    box-shadow: 0 2px 4px rgba(0,0,0,.05); /* Light shadow */
+    flex-shrink: 0; /* Prevent navbar from shrinking */
+}
+
+.navbar-brand {
+    color: #007bff !important; /* Primary blue for brand */
+    font-weight: 700; /* Bold */
+    font-size: 1.5rem; /* Larger font size */
+}
+
+.nav-link {
+    color: #555 !important; /* Darker gray for links */
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+    .nav-link:hover {
+        color: #007bff !important; /* Primary blue on hover */
+    }
+
+/* Main content area styling */
+main {
+    flex-grow: 1; /* Allow main content to take up available space */
+}
+
+/* Footer styling */
+.footer {
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+    box-shadow: 0 -2px 4px rgba(0,0,0,.03);
+    padding: 1rem 0;
+    font-size: 0.9rem;
+    margin-top: auto; /* Pushes the footer to the bottom */
+    flex-shrink: 0; /* Prevent footer from shrinking */
+}
+
+/* General button styling for a more modern look */
+.btn {
+    border-radius: 0.5rem; /* More rounded buttons */
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #218838;
+    }
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        border-color: #5a6268;
+    }
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #c82333;
+    }
+
+/* Card styling for consistency */
+.card {
+    border: none; /* Remove default card border */
+    border-radius: 0.75rem; /* Rounded corners for cards */
+    overflow: hidden; /* Ensures content respects border-radius */
+    box-shadow: 0 4px 12px rgba(0,0,0,.08); /* More pronounced shadow */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+    .card:hover {
+        transform: translateY(-5px); /* Slight lift effect on hover */
+        box-shadow: 0 8px 20px rgba(0,0,0,.12);
+    }
+
+.card-img-top {
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+}
+
+/* Alert messages styling */
+.alert {
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Table styling */
+.table {
+    border-radius: 0.75rem;
+    overflow: hidden; /* Ensures rounded corners apply to table */
+    box-shadow: 0 4px 12px rgba(0,0,0,.05);
+}
+
+    .table thead th {
+        background-color: #007bff; /* Primary blue for table header */
+        color: white;
+        border-bottom: none;
+        padding: 1rem;
+    }
+
+    .table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0,0,0,.03); /* Lighter stripe */
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0,123,255,.075); /* Light blue hover */
+}
+
+/* Search Bar Styling (for Home/Index.cshtml) */
+.search-bar-container {
+    box-shadow: 0 4px 12px rgba(0,0,0,.08); /* Consistent shadow */
+    border-radius: 2rem; /* Overall rounded pill shape for the container */
+    overflow: hidden; /* Crucial for inner elements to conform to the rounded shape */
+    display: flex; /* Use flexbox for inner elements */
+}
+
+    .search-bar-container .form-control {
+        border-top-left-radius: 2rem !important;
+        border-bottom-left-radius: 2rem !important;
+        border-right: none; /* Remove border between input and search button */
+        flex-grow: 1; /* Allow input to take available space */
+    }
+
+    .search-bar-container .btn-primary {
+        border-radius: 0 !important; /* Remove individual button rounding */
+        border-left: none; /* Remove border between search button and clear button */
+        flex-shrink: 0; /* Prevent button from shrinking */
+    }
+
+    .search-bar-container .clear-search-btn {
+        border-top-right-radius: 2rem !important;
+        border-bottom-right-radius: 2rem !important;
+        border-left: none; /* Remove border between search button and clear button */
+        background-color: transparent !important; /* Ensure no background if outline */
+        border-color: #007bff !important; /* Match primary button border color */
+        color: #007bff !important; /* Match primary button text color */
+        flex-shrink: 0; /* Prevent button from shrinking */
+    }
+
+        .search-bar-container .clear-search-btn:hover {
+            background-color: rgba(0,123,255,.05) !important; /* Light hover effect */
+            color: #007bff !important;
+        }

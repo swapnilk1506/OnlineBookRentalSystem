@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineBookRental.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using OnlineBookRental.Infrastructure.Data;
 namespace OnlineBookRental.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250711044125_AddRentalTables")]
+    partial class AddRentalTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -435,7 +438,7 @@ namespace OnlineBookRental.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("OnlineBookRental.Domain.Entities.RentalHeader", "RentalHeader")
-                        .WithMany("RentalDetails")
+                        .WithMany()
                         .HasForeignKey("RentalHeaderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -454,11 +457,6 @@ namespace OnlineBookRental.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
-                });
-
-            modelBuilder.Entity("OnlineBookRental.Domain.Entities.RentalHeader", b =>
-                {
-                    b.Navigation("RentalDetails");
                 });
 #pragma warning restore 612, 618
         }

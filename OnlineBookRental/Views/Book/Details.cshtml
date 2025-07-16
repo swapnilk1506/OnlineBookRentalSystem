@@ -1,0 +1,93 @@
+﻿@model OnlineBookRental.Domain.Entities.Book
+
+@{
+    ViewData["Title"] = Model.Title + " Details"; // Set page title dynamically
+}
+
+<div class="container py-5">
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-primary text-white text-center py-4 rounded-top-3">
+                    <h2 class="mb-0 display-5">@Model.Title</h2>
+                    <p class="lead mb-0">By: @Model.Author</p>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-12 col-md-4 text-center">
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                            {
+                                <img src="@Model.ImageUrl" class="img-fluid rounded shadow-sm" alt="Cover for @Model.Title" style="max-height: 350px; object-fit: contain;">
+                            }
+                            else
+                            {
+                                <img src="https://placehold.co/200x300/F0F0F0/000?text=No+Image" class="img-fluid rounded shadow-sm" alt="No image available" style="max-height: 350px; object-fit: contain;">
+                            }
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <h4 class="text-secondary mb-3">Book Information</h4>
+                            <dl class="row mb-4">
+                                <dt class="col-sm-3">ISBN:</dt>
+                                <dd class="col-sm-9">@Model.ISBN</dd>
+
+                                <dt class="col-sm-3">Price:</dt>
+                                <dd class="col-sm-9 text-success fw-bold">@Model.RentalPricePerDay.ToString("C") / Day</dd>
+
+                                <dt class="col-sm-3">Available:</dt>
+                                <dd class="col-sm-9">@Model.QuantityAvailable</dd>
+                            </dl>
+
+                            <h4 class="text-secondary mb-3">Description</h4>
+                            <p class="text-muted">@Model.Description</p>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
+                                @if (User.Identity.IsAuthenticated && Model.QuantityAvailable > 0)
+                                {
+                                    <!-- NEW: Form for "Rent Now!" button -->
+                                    <form asp-controller="Book" asp-action="InitiateRental" method="post">
+                                        <input type="hidden" name="bookId" value="@Model.Id" />
+                                        <div class="input-group">
+                                            <input type="number" name="rentalDurationDays" value="7" min="1" max="30" class="form-control" style="max-width: 120px;" />
+                                            <span class="input-group-text">days</span>
+                                            <button type="submit" class="btn btn-success btn-lg px-4 gap-3">Rent Now!</button>
+                                        </div>
+                                    </form>
+                                }
+                                else if (Model.QuantityAvailable <= 0)
+                                {
+                                    <button class="btn btn-warning btn-lg px-4 gap-3" disabled>Out of Stock</button>
+                                }
+                                else // Not authenticated
+                                {
+                                    <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary btn-lg px-4 gap-3">Login to Rent</a>
+                                }
+                                <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-lg px-4">Back to List</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Any specific JavaScript for the book details page can go here.
+        // For example, AJAX call for renting the book.
+    </script>
+}

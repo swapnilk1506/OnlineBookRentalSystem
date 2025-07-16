@@ -4,27 +4,20 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - OnlineBookRental.Web</title>
-    
+    <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Custom site.css -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/OnlineBookRental.Web.styles.css" asp-append-version="true" />
-    <style>
-        /* Custom styles for font and general body styles */
-        body {
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f8f9fa; /* Light background for Bootstrap */
-            color: #343a40; /* Dark gray text */
-        }
-        /* Override default bootstrap border-radius if needed for global rounded corners */
-        /* For consistency, Bootstrap usually handles rounded corners on components by default. */
-        /* .card, .btn, .form-control { border-radius: .75rem !important; } */
-    </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
+    @* Added flexbox classes for sticky footer *@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand text-primary fw-bold" asp-area="" asp-controller="Home" asp-action="Index">OnlineBookRental</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">OnlineBookRental</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -32,35 +25,48 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Book" asp-action="Index">Manage Books</a>
-                        </li>
-                        
+                        <!-- Conditional rendering for "Manage Books" link -->
+                        @if (User.IsInRole("Admin")) // Check if the current user is in the "Admin" role
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Book" asp-action="Index">Manage Books</a>
+                            </li>
+                        }
+                        <!-- NEW: Conditional rendering for "My Rentals" link -->
+                        @if (User.Identity.IsAuthenticated) // Only show if user is logged in
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Rental" asp-action="MyRentals">My Rentals</a>
+                            </li>
+                        }
                     </ul>
-                    <partial name="_LoginPartial" /> 
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
 
-    <div class="container-fluid pb-3">
-        <main role="main" class="pb-3">
+    <main role="main" class="flex-grow-1 pb-3">
+        @* Main element now directly handles flex-grow and padding *@
+        <div class="container-fluid">
+            @* Container-fluid moved inside main *@
             @RenderBody()
-        </main>
-    </div>
+        </div>
+    </main>
 
-    <footer class="border-top footer text-muted bg-white shadow-sm">
+    <footer class="border-top footer text-muted bg-white shadow-sm mt-auto">
+        @* Added mt-auto for sticky footer *@
         <div class="container">
             &copy; 2025 - OnlineBookRental.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
 
-    
+    <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
@@ -68,32 +74,3 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-
-@using Microsoft.AspNetCore.Identity
-@using OnlineBookRental.Domain.Entities 
-
-@inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
-
-<ul class="navbar-nav">
-    @if (SignInManager.IsSignedIn(User))
-    {
-        <li class="nav-item">
-            <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
-        </li>
-        <li class="nav-item">
-            <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-            </form>
-        </li>
-    }
-    else
-    {
-        <li class="nav-item">
-            <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
-        </li>
-    }
-</ul>

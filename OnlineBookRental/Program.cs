@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using OnlineBookRental.Application.Services;
+using OnlineBookRental.Domain.Entities; // Required for ApplicationUser and ApplicationRole
 using OnlineBookRental.Domain.Interfaces;
 using OnlineBookRental.Infrastructure;
 using OnlineBookRental.Infrastructure.Data;
 using OnlineBookRental.Infrastructure.Repositories;
-using OnlineBookRental.Domain.Entities; // NEW: For ApplicationUser and ApplicationRole
-using Microsoft.AspNetCore.Identity; // NEW: For Identity configuration
+using Microsoft.AspNetCore.Identity; // Required for Identity
+using Microsoft.Extensions.Hosting; // Required for IHostedService
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,24 +17,27 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// NEW: Configure ASP.NET Core Identity.
-// It uses ApplicationUser for user accounts and ApplicationRole for roles.
-// It uses Entity Framework Core for storage and adds default token providers.
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<ApplicationRole>() // Enable roles
-    .AddEntityFrameworkStores<ApplicationDbContext>(); // Use ApplicationDbContext for Identity storage
+// Configure ASP.NET Core Identity.
+// Uses ApplicationUser for user accounts and ApplicationRole for roles.
+// IMPORTANT: Set RequireConfirmedAccount to false for development if not setting up email sending.
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<ApplicationRole>() // Add role management capabilities
+    .AddEntityFrameworkStores<ApplicationDbContext>(); // Use ApplicationDbContext for Identity data
 
 // Register our custom services and repositories for Dependency Injection.
 // We use Scoped lifetime, meaning a new instance is created per HTTP request.
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>)); // Generic repository
-// REMOVED: builder.Services.AddScoped<IBookRepository, BookRepository>(); // Specific book repository registration removed
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); // Unit of Work
 builder.Services.AddScoped<IBookService, BookService>(); // Book Service
+builder.Services.AddScoped<IRentalService, RentalService>(); // Register Rental Service
+builder.Services.AddScoped<DbInitializer>(); // Register DbInitializer for seeding
+
+// NEW: Register the background service for cleaning up expired pending rentals
+builder.Services.AddHostedService<ExpiredRentalCleanupService>();
 
 builder.Services.AddControllersWithViews();
-
-// NEW: Add Razor Pages for Identity UI scaffolding.
-builder.Services.AddRazorPages();
+// Add Razor Pages support, which is needed for Identity UI.
+builder.Services.AddRazorPages(); // Keep this here for service registration
 
 var app = builder.Build();
 
@@ -41,41 +45,46 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // Enables serving static files like CSS, JS, images.
+app.UseStaticFiles();
 
 app.UseRouting();
 
-// IMPORTANT: Authentication middleware MUST come before Authorization middleware.
-app.UseAuthentication(); // NEW: Enables authentication services.
-app.UseAuthorization(); // Enables authorization services.
+// Order is important for authentication and authorization middleware.
+app.UseAuthentication();
+app.UseAuthorization();
 
-// Maps incoming requests to controller actions.
+// Explicitly define the route for Rental/ConfirmRental to ensure it's matched first
+app.MapControllerRoute(
+    name: "rentalConfirmation",
+    pattern: "Rental/ConfirmRental/{rentalHeaderId:int}",
+    defaults: new { controller = "Rental", action = "ConfirmRental" });
+
+// Default MVC route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// NEW: Map Razor Pages routes, essential for Identity UI.
+// Map Razor Pages after all specific and default MVC controller routes
 app.MapRazorPages();
 
-// Apply database migrations on startup.
-// This ensures your database is created/updated when the application starts.
+
+// Apply database migrations and seed data on startup.
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        context.Database.Migrate(); // Applies any pending migrations.
+        var dbInitializer = services.GetRequiredService<DbInitializer>();
+        await dbInitializer.Initialize();
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while migrating the database.");
+        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
     }
 }
 

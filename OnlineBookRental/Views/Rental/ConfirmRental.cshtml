@@ -1,0 +1,69 @@
+﻿@model OnlineBookRental.Application.Models.RentalConfirmationViewModel 
+
+@{
+    ViewData["Title"] = "Confirm Your Rental";
+}
+
+<div class="container py-5">
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-info text-white text-center py-4 rounded-top-3">
+                    <h2 class="mb-0 display-5">Confirm Your Rental</h2>
+                    <p class="lead mb-0">Please review the details before finalizing.</p>
+                </div>
+                <div class="card-body p-4">
+                    <h4 class="text-secondary mb-3">Rental Summary</h4>
+                    <dl class="row mb-4">
+                        <dt class="col-sm-4">Book Title:</dt>
+                        <dd class="col-sm-8">@Model.Book.Title</dd>
+
+                        <dt class="col-sm-4">Author:</dt>
+                        <dd class="col-sm-8">@Model.Book.Author</dd>
+
+                        <dt class="col-sm-4">ISBN:</dt>
+                        <dd class="col-sm-8">@Model.Book.ISBN</dd>
+
+                        <dt class="col-sm-4">Price Per Day:</dt>
+                        <dd class="col-sm-8">@Model.Book.RentalPricePerDay.ToString("C")</dd>
+
+                        <dt class="col-sm-4">Rental Duration:</dt>
+                        <dd class="col-sm-8">@Model.RentalDurationDays days</dd>
+
+                        <dt class="col-sm-4 text-primary fw-bold">Estimated Total:</dt>
+                        <dd class="col-sm-8 text-primary fw-bold">@Model.RentalHeader.TotalRentalAmount.ToString("C")</dd>
+
+                        <dt class="col-sm-4">Due Date:</dt>
+                        <dd class="col-sm-8">@Model.RentalHeader.DueDate.ToShortDateString()</dd>
+                    </dl>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
+                        <form asp-controller="Rental" asp-action="FinalizeRental" method="post">
+                            <input type="hidden" name="rentalHeaderId" value="@Model.RentalHeader.Id" />
+                            <button type="submit" class="btn btn-success btn-lg px-4 gap-3">Finalize Rental</button>
+                        </form>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-lg px-4">Cancel and Back to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineBookRental.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using OnlineBookRental.Infrastructure.Data;
 namespace OnlineBookRental.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250710172750_FreshidentitySetup")]
+    partial class FreshidentitySetup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -305,76 +308,6 @@ namespace OnlineBookRental.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("OnlineBookRental.Domain.Entities.RentalDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("PricePerDay")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("RentalDurationDays")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RentalHeaderId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotalDetailAmount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookId");
-
-                    b.HasIndex("RentalHeaderId");
-
-                    b.ToTable("RentalDetails");
-                });
-
-            modelBuilder.Entity("OnlineBookRental.Domain.Entities.RentalHeader", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("RentalDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("RentalStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ReturnDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("TotalRentalAmount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.ToTable("RentalHeaders");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("OnlineBookRental.Domain.Entities.ApplicationRole", null)
@@ -424,41 +357,6 @@ namespace OnlineBookRental.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("OnlineBookRental.Domain.Entities.RentalDetail", b =>
-                {
-                    b.HasOne("OnlineBookRental.Domain.Entities.Book", "Book")
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OnlineBookRental.Domain.Entities.RentalHeader", "RentalHeader")
-                        .WithMany("RentalDetails")
-                        .HasForeignKey("RentalHeaderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
-
-                    b.Navigation("RentalHeader");
-                });
-
-            modelBuilder.Entity("OnlineBookRental.Domain.Entities.RentalHeader", b =>
-                {
-                    b.HasOne("OnlineBookRental.Domain.Entities.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ApplicationUser");
-                });
-
-            modelBuilder.Entity("OnlineBookRental.Domain.Entities.RentalHeader", b =>
-                {
-                    b.Navigation("RentalDetails");
                 });
 #pragma warning restore 612, 618
         }

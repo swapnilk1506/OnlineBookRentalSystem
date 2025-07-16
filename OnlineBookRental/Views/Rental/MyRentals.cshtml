@@ -1,0 +1,87 @@
+﻿@model IEnumerable<OnlineBookRental.Application.Models.RentalViewModel>
+
+@{
+    ViewData["Title"] = "My Rentals";
+}
+
+<div class="container py-4">
+    <div class="row pb-3">
+        <div class="col-12 text-center">
+            <h1 class="display-4 text-primary">My Rentals</h1>
+            <p class="lead">View your current and past book rentals.</p>
+        </div>
+    </div>
+
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.First().BookTitle)</th>
+                        <th>@Html.DisplayNameFor(model => model.First().Author)</th>
+                        <th>@Html.DisplayNameFor(model => model.First().RentalDate)</th>
+                        <th>@Html.DisplayNameFor(model => model.First().DueDate)</th>
+                        <th>@Html.DisplayNameFor(model => model.First().ReturnDate)</th>
+                        <th>@Html.DisplayNameFor(model => model.First().TotalAmount)</th>
+                        <th>@Html.DisplayNameFor(model => model.First().RentalStatus)</th>
+                        <th></th> @* For actions like "Return Book" *@
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="@(item.IsOverdue ? "table-danger" : "")"> @* Highlight overdue rentals in red *@
+                            <td>@Html.DisplayFor(modelItem => item.BookTitle)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Author)</td>
+                            <td>@Html.DisplayFor(modelItem => item.RentalDate)</td>
+                            <td>@Html.DisplayFor(modelItem => item.DueDate)</td>
+                            <td>@(item.ReturnDate.HasValue ? Html.DisplayFor(modelItem => item.ReturnDate) : Html.Raw("N/A"))</td>
+                            <td>@Html.DisplayFor(modelItem => item.TotalAmount)</td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RentalStatus)
+                                @if (item.IsOverdue)
+                                {
+                                    <span class="badge bg-danger ms-2">OVERDUE</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.RentalStatus == "Active")
+                                {
+                                    <a href="#" class="btn btn-sm btn-warning disabled">Return (Coming Soon)</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center" role="alert">
+            You currently have no active or past rentals. Start by renting a book from the <a asp-controller="Home" asp-action="Index">Home Page</a>!
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Any specific JavaScript for the rentals page can go here.
+    </script>
+}

@@ -1,5 +1,5 @@
 ﻿using OnlineBookRental.Application.Services;
-using OnlineBookRental.Domain.Entities; // Added for Book entity
+using OnlineBookRental.Domain.Entities;
 using OnlineBookRental.Domain.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,6 +20,7 @@ namespace OnlineBookRental.Application.Services
         }
 
         // Retrieves all books from the repository.
+        // This method was previously throwing NotImplementedException.
         public async Task<IEnumerable<Book>> GetAllBooksAsync()
         {
             // Now correctly fetches all books using the Book repository from the Unit of Work.
@@ -29,14 +30,14 @@ namespace OnlineBookRental.Application.Services
         // Retrieves a book by ID from the repository.
         public async Task<Book?> GetBookByIdAsync(int id)
         {
-            // Implemented: Retrieves a book by ID.
+            // Now correctly fetches a book by ID using the Book repository from the Unit of Work.
             return await _unitOfWork.Books.GetByIdAsync(id);
         }
 
         // Adds a new book and persists changes.
         public async Task AddBookAsync(Book book)
         {
-            // Implemented: Adds a new book and persists changes.
+            // Now correctly adds a book using the Book repository from the Unit of Work.
             await _unitOfWork.Books.AddAsync(book);
             await _unitOfWork.CompleteAsync();
         }
@@ -44,7 +45,7 @@ namespace OnlineBookRental.Application.Services
         // Updates an existing book and persists changes.
         public async Task UpdateBookAsync(Book book)
         {
-            // Implemented: Updates an existing book and persists changes.
+            // Now correctly updates a book using the Book repository from the Unit of Work.
             await _unitOfWork.Books.UpdateAsync(book);
             await _unitOfWork.CompleteAsync();
         }
@@ -52,7 +53,7 @@ namespace OnlineBookRental.Application.Services
         // Deletes a book by ID and persists changes.
         public async Task DeleteBookAsync(int id)
         {
-            // Implemented: Deletes a book by ID and persists changes.
+            // Now correctly deletes a book by ID using the Book repository from the Unit of Work.
             await _unitOfWork.Books.DeleteAsync(id);
             await _unitOfWork.CompleteAsync();
         }
