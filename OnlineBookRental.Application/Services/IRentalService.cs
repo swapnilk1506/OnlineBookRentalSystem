@@ -19,5 +19,7 @@ namespace OnlineBookRental.Application.Services
         Task<RentalHeader?> GetRentalHeaderWithDetails(int rentalHeaderId);
         // Retrieves all rental headers (with details and books) for a specific user.
         Task<IEnumerable<RentalViewModel>> GetUserRentalsAsync(string userId);
+        // NEW: Handles the return of a book, updating rental status and book quantity.
+        Task<(bool Success, string? ErrorMessage)> ReturnBook(int rentalHeaderId);
     }
 }

@@ -156,5 +156,49 @@ namespace OnlineBookRental.Application.Services
 
             return rentalViewModels;
         }
+
+        // NEW: Handles the return of a book, updating rental status and book quantity.
+        public async Task<(bool Success, string? ErrorMessage)> ReturnBook(int rentalHeaderId)
+        {
+            // 1. Retrieve the rental header with its details and associated book
+            var rentalHeader = await _context.RentalHeaders
+                                             .Include(rh => rh.RentalDetails)
+                                                 .ThenInclude(rd => rd.Book)
+                                             .FirstOrDefaultAsync(rh => rh.Id == rentalHeaderId);
+
+            if (rentalHeader == null)
+            {
+                return (false, "Rental not found.");
+            }
+
+            if (rentalHeader.RentalStatus == "Returned" || rentalHeader.RentalStatus == "Expired")
+            {
+                return (false, "This rental has already been returned or expired.");
+            }
+
+            // 2. Update RentalHeader
+            rentalHeader.ReturnDate = DateTime.Now;
+            rentalHeader.RentalStatus = "Returned";
+            await _unitOfWork.RentalHeaders.UpdateAsync(rentalHeader);
+
+            // 3. Update Book Quantity
+            // Assuming one rental detail per header for simplicity in this context.
+            // In a more complex system with multiple books per rental, this would loop through details.
+            var rentalDetail = rentalHeader.RentalDetails.FirstOrDefault();
+            if (rentalDetail != null && rentalDetail.Book != null)
+            {
+                rentalDetail.Book.QuantityAvailable++;
+                await _unitOfWork.Books.UpdateAsync(rentalDetail.Book);
+            }
+            else
+            {
+                return (false, "Could not find associated book details for this rental.");
+            }
+
+            // 4. Complete the unit of work to save all changes
+            await _unitOfWork.CompleteAsync();
+
+            return (true, null); // Return success
+        }
     }
 }

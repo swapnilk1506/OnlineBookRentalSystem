@@ -97,5 +97,33 @@ namespace OnlineBookRental.Web.Controllers
 
             return View(userRentals);
         }
+
+        // NEW: POST: /Rental/ReturnBook/{rentalHeaderId}
+        // Handles the return of a book.
+        [HttpPost("Rental/ReturnBook/{rentalHeaderId:int}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ReturnBook(int rentalHeaderId)
+        {
+            // Ensure the rental belongs to the current user before allowing return
+            var rentalHeader = await _rentalService.GetRentalHeaderWithDetails(rentalHeaderId);
+            if (rentalHeader == null || rentalHeader.ApplicationUserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
+            {
+                TempData["error"] = "Rental not found or you don't have permission to return it.";
+                return RedirectToAction(nameof(MyRentals));
+            }
+
+            var (success, errorMessage) = await _rentalService.ReturnBook(rentalHeaderId);
+
+            if (success)
+            {
+                TempData["success"] = "Book returned successfully!";
+            }
+            else
+            {
+                TempData["error"] = errorMessage ?? "Failed to return book. Please try again.";
+            }
+
+            return RedirectToAction(nameof(MyRentals));
+        }
     }
 }
