@@ -7,6 +7,7 @@ using OnlineBookRental.Infrastructure.Data;
 using OnlineBookRental.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity; // Required for Identity
 using Microsoft.Extensions.Hosting; // Required for IHostedService
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,27 +73,35 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 
-// Apply database migrations and seed data on startup.
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+
     try
     {
-        var dbInitializer = services.GetRequiredService<DbInitializer>();
-        await dbInitializer.Initialize();
+        var db = services.GetRequiredService<ApplicationDbContext>();
+
+        // Apply pending migrations (async)
+        await db.Database.MigrateAsync();
+
+        // Run database seeding (your async Initialize returns Task)
+        var initializer = services.GetService<DbInitializer>();
+        if (initializer != null)
+        {
+            await initializer.Initialize();
+            logger.LogInformation("Database seeding completed.");
+        }
+        else
+        {
+            logger.LogWarning("DbInitializer service not registered; skipping seeding.");
+        }
     }
     catch (Exception ex)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
+        // Log error but do NOT rethrow — allow app to run (temporary safeguard).
         logger.LogError(ex, "An error occurred while migrating or seeding the database.");
     }
-
-}
-
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
 }
 
 
