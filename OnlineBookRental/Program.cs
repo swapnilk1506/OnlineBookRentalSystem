@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Configure Entity Framework Core with SQL Server.
 // Reads the connection string from appsettings.json.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Configure ASP.NET Core Identity.
 // Uses ApplicationUser for user accounts and ApplicationRole for roles.

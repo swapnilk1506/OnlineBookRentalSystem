@@ -14,7 +14,8 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
     @* Added flexbox classes for sticky footer *@
-    <header>
+    <header class="flex-shrink-0">
+        @* Added flex-shrink-0 *@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">OnlineBookRental</a>
@@ -59,8 +60,8 @@
         </div>
     </main>
 
-    <footer class="border-top footer text-muted bg-white shadow-sm mt-auto">
-        @* Added mt-auto for sticky footer *@
+    <footer class="border-top footer text-muted bg-white shadow-sm mt-auto flex-shrink-0">
+        @* Added mt-auto for sticky footer and flex-shrink-0 *@
         <div class="container">
             &copy; 2025 - OnlineBookRental.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>

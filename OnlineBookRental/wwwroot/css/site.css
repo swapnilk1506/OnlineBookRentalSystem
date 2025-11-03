@@ -1,6 +1,6 @@
 /* Custom styles for font and general body styles */
-html, body {
-    height: 100%; /* Ensure html and body take full height */
+html {
+    height: 100%; /* NEW: Ensure HTML takes full height */
     margin: 0;
     padding: 0;
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
@@ -12,7 +12,9 @@ body {
     color: #333; /* Darker text for readability */
     display: flex; /* Enable flexbox for sticky footer */
     flex-direction: column; /* Arrange children vertically */
-    min-height: 100vh; /* Ensure body is at least viewport height */
+    min-height: 100vh; /* Ensure body is at least viewport height and expands with content */
+    margin: 0;
+    padding: 0;
 }
 
 /* Navbar specific styling */
@@ -20,7 +22,7 @@ body {
     background-color: #ffffff; /* White background for navbar */
     border-bottom: 1px solid #e0e0e0; /* Subtle border at the bottom */
     box-shadow: 0 2px 4px rgba(0,0,0,.05); /* Light shadow */
-    flex-shrink: 0; /* Prevent navbar from shrinking */
+    /* flex-shrink: 0; - This is now directly on the <header> tag in _Layout.cshtml */
 }
 
 .navbar-brand {
@@ -41,7 +43,7 @@ body {
 
 /* Main content area styling */
 main {
-    flex-grow: 1; /* Allow main content to take up available space */
+    flex: 1 0 auto; /* Grow: 1, Shrink: 0, Basis: auto - crucial for sticky footer */
 }
 
 /* Footer styling */
@@ -51,8 +53,8 @@ main {
     box-shadow: 0 -2px 4px rgba(0,0,0,.03);
     padding: 1rem 0;
     font-size: 0.9rem;
-    margin-top: auto; /* Pushes the footer to the bottom */
-    flex-shrink: 0; /* Prevent footer from shrinking */
+    /* margin-top: auto; - Already on the <footer> tag in _Layout.cshtml */
+    /* flex-shrink: 0; - Already on the <footer> tag in _Layout.cshtml */
 }
 
 /* General button styling for a more modern look */
@@ -152,6 +154,14 @@ main {
 
 .table-hover tbody tr:hover {
     background-color: rgba(0,123,255,.075); /* Light blue hover */
+}
+
+/* NEW: Style for the scrollable table container */
+.table-scroll-wrapper {
+    max-height: calc(100vh - 260px); /* Adjusted value for header/footer and spacing */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling if table is too wide */
+    margin-bottom: 1rem; /* Add some space below the scrollable table */
 }
 
 /* Search Bar Styling (for Home/Index.cshtml) */
